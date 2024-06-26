@@ -56,23 +56,23 @@ func TestRenderTemplate(t *testing.T) {
 	}
 }
 
-func TestRenderQueryStructure(t *testing.T) {
+func TestRenderConstruct(t *testing.T) {
 	type queryModel struct {
 		ID int
 	}
 
 	tests := []struct {
 		name           string
-		queryStructure QueryStructure
+		queryStructure Construct
 		queryModel     interface{}
 		expected       string
 		expectErr      bool
 	}{
 		{
 			name: "should render query from QueryStructure when there is no error",
-			queryStructure: QueryStructure{
-				QueryTmpl: "SELECT * FROM users WHERE id = {{.ID}}",
-				TmplFns:   template.FuncMap{},
+			queryStructure: Construct{
+				Template:  "SELECT * FROM users WHERE id = {{.ID}}",
+				Functions: template.FuncMap{},
 			},
 			queryModel: queryModel{ID: 1},
 			expected:   "SELECT * FROM users WHERE id = 1",
@@ -80,9 +80,9 @@ func TestRenderQueryStructure(t *testing.T) {
 		},
 		{
 			name: "should return error when fail to render QueryStructure",
-			queryStructure: QueryStructure{
-				QueryTmpl: "SELECT * FROM users WHERE name = {{.Name}}",
-				TmplFns:   template.FuncMap{},
+			queryStructure: Construct{
+				Template:  "SELECT * FROM users WHERE name = {{.Name}}",
+				Functions: template.FuncMap{},
 			},
 			queryModel: queryModel{ID: 1},
 			expected:   "",
@@ -92,7 +92,7 @@ func TestRenderQueryStructure(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := RenderQueryStructure(tt.queryStructure, tt.queryModel)
+			result, err := RenderConstruct(tt.queryStructure, tt.queryModel)
 			if tt.expectErr {
 				require.Error(t, err)
 			} else {
