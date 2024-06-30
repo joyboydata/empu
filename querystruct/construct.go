@@ -17,10 +17,13 @@ type Renderer interface {
 
 type QueryModel = any
 
-type ConstructRenderer Construct
+type ConstructRenderer struct {
+	Construct  Construct
+	QueryModel any
+}
 
 func (c ConstructRenderer) Render() (string, error) {
-	return RenderConstruct(Construct(c), nil)
+	return renderTemplate(c.Construct.Template, c.Construct.Functions, c.QueryModel)
 }
 
 type ReferenceRenderer interface {
@@ -33,9 +36,9 @@ type Reference struct {
 }
 
 // RenderConstruct wrapper on top of generateTemplate for better organization
-func RenderConstruct(construct Construct, queryModel QueryModel, references ...Reference) (string, error) {
+func RenderConstruct(constructRenderer ConstructRenderer, references ...Reference) (string, error) {
 	if len(references) == 0 {
-		return renderTemplate(construct.Template, construct.Functions, queryModel)
+		return constructRenderer.Render()
 	}
 
 	for _, reference := range references {

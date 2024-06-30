@@ -92,7 +92,10 @@ func TestRenderConstruct(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := RenderConstruct(tt.queryStructure, tt.queryModel)
+			result, err := RenderConstruct(ConstructRenderer{
+				Construct:  tt.queryStructure,
+				QueryModel: tt.queryModel,
+			})
 			if tt.expectErr {
 				require.Error(t, err)
 			} else {
